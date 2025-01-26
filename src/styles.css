@@ -1,0 +1,103 @@
+body {
+    background-color: black;
+    color: #e6b800; /* Gold text */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  form, input, textarea, button {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  input, textarea {
+    background: black;
+    border: 2px solid #e6b800;
+    color: #e6b800;
+  }
+  
+  button {
+    background-color: #e6b800;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #b7950b; /* Darker gold on hover */
+  }
+  
+  h1, h2, h3 {
+    color: #e6b800;
+  }
+  
+  /* Navigation */
+  nav {
+    background-color: #b7950b; /* Dark gold for nav background */
+    padding: 10px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  nav ul li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  nav ul li a:hover {
+    color: #e6b800; /* Light gold on hover */
+  }
+  
+  /* Approval Component */
+  .Approval {
+    background-color: rgba(183, 149, 11, 0.1); /* Light gold background for approval items */
+    border: 1px solid #e6b800;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+  
+  /* Procurement Dashboard */
+  .ProcurementDashboard {
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly transparent black for contrast */
+    border: 1px solid #e6b800;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .ProcurementDashboard h2 {
+    border-bottom: 2px solid #e6b800;
+    padding-bottom: 10px;
+  }
+  
+  .ProcurementDashboard div {
+    background-color: rgba(183, 149, 11, 0.05); /* Very light gold for separation */
+    border-bottom: 1px solid #e6b800;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  
+  .ProcurementDashboard div:last-child {
+    border-bottom: none;
+  }
+  
+  /* General Styling */
+  a {
+    color: #e6b800;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
