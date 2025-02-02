@@ -1,3 +1,18 @@
+### E-REQUISITION SYSTEM
+E-Requisition System is built using React, a popular JavaScript library for creating interactive UIs. The system aims to streamline the process of managing requisitions within an organization by providing:
+
+User Authentication: Users can log in with different roles like 'Requestor', 'Manager', or 'Procurement' staff, which dictate their permissions within the application.
+Requisition Submission: A form (RequisitionForm) allows users to submit new requisitions with details like item name, quantity, estimated price, total price, justification, and budget code.
+
+Approval Mechanism: Managers can approve or reject pending requisitions through an ApprovalDashboard.
+Procurement Management: Procurement staff have access to a ProcurementDashboard where they can view approved requisitions and process them further.
+
+Role-Based Access: Navigation and page access are controlled based on user roles to ensure that only authorized personnel can perform specific actions.
+
+Data Persistence: Although this is a frontend-focused project, we simulate backend functionality by managing requisition data in local memory and localStorage for persistence between sessions.
+
+Responsive Design: The system uses CSS (or would in a full implementation) to provide a user-friendly interface across different devices.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
