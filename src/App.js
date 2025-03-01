@@ -29,18 +29,17 @@ function App() {
 
   const handleApprove = (requisition) => {
     setApprovedRequests(prev => [...prev, { ...requisition, status: 'Approved' }]);
-    setRequisitions(prev => prev.filter(r => r !== requisition));
+    setRequisitions(prev => prev.filter(r => r.serialNumber !== requisition.serialNumber));
   };
 
   const handleReject = (requisition) => {
-    setRequisitions(prev => prev.filter(r => r !== requisition));
+    setRequisitions(prev => prev.filter(r => r.serialNumber !== requisition.serialNumber));
   };
 
- 
   const handleProcessRequisition = (requisition) => {
-    console.log('Processing requisition:', requisition);
-    // logic for processing the requisition
     setProcessedRequests(prev => [...prev, { ...requisition, status: 'Processed' }]);
+    // Remove from approvedRequests after processing
+    setApprovedRequests(prev => prev.filter(req => req.serialNumber !== requisition.serialNumber));
   };
 
   return (
