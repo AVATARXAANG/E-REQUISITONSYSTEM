@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 
-const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
+const ProcurementDashboard = ({ approvedRequests, processedRequests, onProcessRequisition }) => {
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [processedItems, setProcessedItems] = useState([]);
+  const [processingSerialNumbers, setProcessingSerialNumbers] = useState(new Set());
 
   // Open popup and initialize processed items state
   const handleOpenPopup = (req) => {
+    if (processingSerialNumbers.has(req.serialNumber)) return;
     setSelectedRequisition(req);
     setProcessedItems(
       req.items.map(item => ({
         id: item.id,
         itemDescription: item.itemDescription,
         quantityRequired: item.quantityRequired,
-        quantityIssued: '', // Initial empty value for quantity issued
-        outOfStock: false // Initial checkbox state
+        quantityIssued: '',
+        outOfStock: false
       }))
     );
   };
@@ -44,8 +46,12 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
 
   // Process the requisition with updated data
   const handleProcess = () => {
+    if (!selectedRequisition || processingSerialNumbers.has(selectedRequisition.serialNumber)) return;
+
+    setProcessingSerialNumbers(prev => new Set(prev).add(selectedRequisition.serialNumber));
     const updatedRequisition = {
       ...selectedRequisition,
+      status: 'Processed',
       items: processedItems.map(item => ({
         id: item.id,
         itemDescription: item.itemDescription,
@@ -55,7 +61,7 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
       }))
     };
     onProcessRequisition(updatedRequisition);
-    handleClosePopup(); // Close the popup after processing
+    handleClosePopup();
   };
 
   return (
@@ -115,18 +121,19 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
               ))}
               <button 
                 onClick={() => handleOpenPopup(req)}
+                disabled={processingSerialNumbers.has(req.serialNumber)}
                 style={{
-                  backgroundColor: '#2196F3',
+                  backgroundColor: processingSerialNumbers.has(req.serialNumber) ? '#ccc' : '#2196F3',
                   color: 'white',
                   border: 'none',
                   padding: '10px 20px',
                   marginTop: '10px',
                   borderRadius: '4px',
-                  cursor: 'pointer',
+                  cursor: processingSerialNumbers.has(req.serialNumber) ? 'not-allowed' : 'pointer',
                   fontSize: '14px'
                 }}
               >
-                Process Requisition
+                {processingSerialNumbers.has(req.serialNumber) ? 'Processed' : 'Process Requisition'}
               </button>
             </div>
           ))
@@ -168,6 +175,7 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
                   onChange={(e) => handleQuantityIssuedChange(item.id, e.target.value)}
                   min="0"
                   style={{ width: '80px', marginLeft: '10px' }}
+                  disabled={processingSerialNumbers.has(selectedRequisition.serialNumber)}
                 />
               </label>
               <label style={{ display: 'block', margin: '5px 0' }}>
@@ -177,6 +185,7 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
                   checked={item.outOfStock}
                   onChange={() => handleOutOfStockChange(item.id)}
                   style={{ marginLeft: '10px' }}
+                  disabled={processingSerialNumbers.has(selectedRequisition.serialNumber)}
                 />
               </label>
             </div>
@@ -184,18 +193,19 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
           <div style={{ textAlign: 'center' }}>
             <button 
               onClick={handleProcess}
+              disabled={processingSerialNumbers.has(selectedRequisition.serialNumber)}
               style={{
-                backgroundColor: '#2196F3',
+                backgroundColor: processingSerialNumbers.has(selectedRequisition.serialNumber) ? '#ccc' : '#2196F3',
                 color: 'white',
                 border: 'none',
                 padding: '10px 20px',
                 marginRight: '10px',
                 borderRadius: '4px',
-                cursor: 'pointer',
+                cursor: processingSerialNumbers.has(selectedRequisition.serialNumber) ? 'not-allowed' : 'pointer',
                 fontSize: '14px'
               }}
             >
-              Process
+              {processingSerialNumbers.has(selectedRequisition.serialNumber) ? 'Processed' : 'Process'}
             </button>
             <button 
               onClick={handleClosePopup}
@@ -214,6 +224,64 @@ const ProcurementDashboard = ({ approvedRequests, onProcessRequisition }) => {
           </div>
         </div>
       )}
+
+      {/* Processed Requisitions Section */}
+      {processedRequests && processedRequests.length > 0 && (
+        <div 
+          style={{
+            marginTop: '30px'
+          }}
+        >
+          <h2 
+            style={{
+              color: '#2196F3',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}
+          >
+            Processed Requisitions
+          </h2>
+          {processedRequests.map((req, index) => (
+            <div 
+              key={req.serialNumber || index}
+              style={{
+                backgroundColor: 'white',
+                padding: '15px',
+                marginBottom: '15px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                borderLeft: '4px solid #4CAF50' // Green border for processed
+              }}
+            >
+              <h3 
+                style={{
+                  color: '#4CAF50',
+                  margin: '0 0 10px 0'
+                }}
+              >
+                Requisition S11: {req.serialNumber}
+              </h3>
+              <h4 
+                style={{
+                  color: '#4CAF50',
+                  margin: '0 0 10px 0'
+                }}
+              >
+                Department: {req.department}
+              </h4>
+              {req.items.map((item, itemIndex) => (
+                <div key={item.id || itemIndex} style={{ marginBottom: '10px' }}>
+                  <p style={{ margin: '5px 0' }}>{itemIndex + 1}. {item.itemDescription}</p>
+                  <p style={{ margin: '5px 0' }}>Quantity Required: {item.quantityRequired}</p>
+                  <p style={{ margin: '5px 0' }}>Quantity Issued: {item.quantityIssued}</p>
+                  {item.outOfStock && <p style={{ margin: '5px 0', color: '#FF5722' }}>Out of Stock</p>}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div 
         style={{
           marginTop: '20px',

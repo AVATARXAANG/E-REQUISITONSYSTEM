@@ -18,7 +18,7 @@ const LoginForm = ({ onLogin }) => {
 
   return (
     <div>
-    <h3>REQUISITION|FORWARDING|SYSTEM</h3>
+    <h3>REQUISITION | FORWARDING | SYSTEM</h3>
     <form onSubmit={handleSubmit}>
       <input type="text" name="username" value={credentials.username} onChange={handleChange} placeholder="Username" required />
       <input type="password" name="password" value={credentials.password} onChange={handleChange} placeholder="Password" required />

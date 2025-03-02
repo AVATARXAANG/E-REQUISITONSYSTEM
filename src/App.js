@@ -14,7 +14,7 @@ function App() {
   const [processedRequests, setProcessedRequests] = useState([]);
 
   const handleLogin = (credentials) => {
-    let role = 'Requestor'; // Default role
+    let role = 'Requestor';
     if (credentials.username === 'manager') {
       role = 'manager';
     } else if (credentials.username === 'procurement') {
@@ -37,10 +37,21 @@ function App() {
   };
 
   const handleProcessRequisition = (requisition) => {
+    if (processedRequests.some(proc => proc.serialNumber === requisition.serialNumber)) {
+      return;
+    }
     setProcessedRequests(prev => [...prev, { ...requisition, status: 'Processed' }]);
-    // Remove from approvedRequests after processing
     setApprovedRequests(prev => prev.filter(req => req.serialNumber !== requisition.serialNumber));
+    setRequisitions(prev => prev.filter(req => req.serialNumber !== requisition.serialNumber));
   };
+
+  const pendingRequisitions = requisitions.filter(req => 
+    !processedRequests.some(proc => proc.serialNumber === req.serialNumber)
+  );
+
+  const activeApprovedRequests = approvedRequests.filter(req => 
+    !processedRequests.some(proc => proc.serialNumber === req.serialNumber)
+  );
 
   return (
     <Router>
@@ -52,7 +63,7 @@ function App() {
                 {user.role === 'Requestor' && <li><Link to="/submit-requisition">Submit Requisition</Link></li>}
                 {user.role === 'manager' && <li><Link to="/approval-dashboard">Approval Dashboard</Link></li>}
                 {user.role === 'procurement' && <li><Link to="/procurement">Procurement Dashboard</Link></li>}
-                <li><Link to="/login" onClick={() => setUser(null)}>Logout</Link></li>
+                <li><Link to="/login" onClick={() => setUser(null)}>Logout</Link></li>}
               </>
             ) : (
               <li><Link to="/login">Login</Link></li>
@@ -73,7 +84,7 @@ function App() {
           <Route path="/approval-dashboard" element={
             user && user.role === 'manager' ? (
               <ApprovalDashboard 
-                requisitions={requisitions} 
+                requisitions={pendingRequisitions} 
                 onApprove={handleApprove} 
                 onReject={handleReject} 
               />
@@ -84,8 +95,9 @@ function App() {
           <Route path="/procurement" element={
             user && user.role === 'procurement' ? (
               <Procurement 
-                approvedRequests={approvedRequests} 
-                onProcessRequisition={handleProcessRequisition}
+                approvedRequests={activeApprovedRequests} 
+                processedRequests={processedRequests} // Pass processedRequests
+                onProcessed={handleProcessRequisition} // Renamed for clarity
               />
             ) : (
               <Navigate to="/" replace />
